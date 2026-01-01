@@ -1,0 +1,16 @@
+{
+  "best_model_label": "RandomForest",
+  "test_metrics": {
+    "accuracy": 0.8922222222222222,
+    "f1": 0.7601977750309024,
+    "roc_auc": 0.9287328490718322,
+    "model": "RandomForest"
+  },
+  "search_summary": {
+    "best_params": {
+      "max_depth": null
+    },
+    "best_cv_roc_auc": 0.928745215551066
+  },
+  "random_state": 42
+}
