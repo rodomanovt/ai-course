@@ -1,0 +1,28 @@
+[
+  {
+    "dataset": 1,
+    "algo": "kmeans",
+    "params": {
+      "k": 2
+    },
+    "criteria": "silhouette"
+  },
+  {
+    "dataset": 2,
+    "algo": "dbscan",
+    "params": {
+      "eps": 0.1,
+      "min_samples": 10
+    },
+    "criteria": "silhouette"
+  },
+  {
+    "dataset": 3,
+    "algo": "dbscan",
+    "params": {
+      "eps": 0.1,
+      "min_samples": 10
+    },
+    "criteria": "silhouette"
+  }
+]

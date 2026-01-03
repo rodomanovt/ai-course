@@ -1,0 +1,29 @@
+[
+  {
+    "dataset": 1,
+    "metrics": {
+      "silhouette": 0.5216395622404242,
+      "davies_bouldin": 0.6853295219054459,
+      "calinski_harabasz": 11786.95462267153
+    },
+    "noise_frac": 0.0
+  },
+  {
+    "dataset": 2,
+    "metrics": {
+      "silhouette": 0.5812458584406734,
+      "davies_bouldin": 0.577982006980007,
+      "calinski_harabasz": 2758.1225203015906
+    },
+    "noise_frac": 0.9185
+  },
+  {
+    "dataset": 3,
+    "metrics": {
+      "silhouette": 0.8121356112341539,
+      "davies_bouldin": 0.2449468669104906,
+      "calinski_harabasz": 3564.021041770511
+    },
+    "noise_frac": 0.9959333333333333
+  }
+]
