@@ -37,28 +37,28 @@ PascalVOC содержит 20 классов
 
 Опишите коротко и сопоставимо:
 
-- C1 (simple-cnn-base):
-- C2 (simple-cnn-aug):
-- C3 (resnet18-head-only):
-- C4 (resnet18-finetune):
+- C1 (simple-cnn-base): 3 conv blocks, 2 classificator layers
+- C2 (simple-cnn-aug): та же модель, что C1, но обучение с аугментациями
+- C3 (resnet18-head-only): ResNet18 с дообучением классификационной головы
+- C4 (resnet18-finetune): ResNet18 с fine-tune layer 4 + fc
 
 Дополнительно:
 
-- Loss:
-- Optimizer(ы):
-- Batch size:
-- Epochs (макс):
-- Критерий выбора лучшей модели:
+- Loss: CrossEntropyLoss
+- Optimizer(ы): Adam
+- Batch size: 64
+- Epochs (макс): 12
+- Критерий выбора лучшей модели: accuracy на validation
 
 ## 5. Часть B: постановка задачи и режимы оценки (V1-V2)
 
 ### Если выбран detection track
 
-- Модель:
+- Модель: FasterRCNN_ResNet50_FPN_V2
 - V1: `score_threshold = 0.3`
 - V2: `score_threshold = 0.7`
-- Как считался IoU:
-- Как считались precision / recall:
+- Как считался IoU: отношение пересечения и объединения истинных и предсазанных боксов
+- Как считались precision / recall: при IoU >= 0.5 на 200 изображениях (для экономии времени)
 
 ### Если выбран segmentation track
 
@@ -73,47 +73,38 @@ PascalVOC содержит 20 классов
 
 Ссылки на файлы в репозитории:
 
-- Таблица результатов: `./artifacts/runs.csv`
-- Лучшая модель части A: `./artifacts/best_classifier.pt`
-- Конфиг лучшей модели части A: `./artifacts/best_classifier_config.json`
-- Кривые лучшего прогона классификации: `./artifacts/figures/classification_curves_best.png`
-- Сравнение C1-C4: `./artifacts/figures/classification_compare.png`
-- Визуализация аугментаций: `./artifacts/figures/augmentations_preview.png`
-- Визуализации второй части: `./artifacts/figures/...`
+- Таблица результатов: [`./artifacts/runs.csv`](./artifacts/runs.csv)
+- Лучшая модель части A: [`./artifacts/best_classifier.pt`](./artifacts/best_classifier.pt)
+- Конфиг лучшей модели части A: [`./artifacts/best_classifier_config.json`](./artifacts/best_classifier_config.json)
+- Кривые лучшего прогона классификации: [`./artifacts/figures/classification_curves_best.png`](./artifacts/figures/classification_curves_best.png)
+- Сравнение C1-C4: [`./artifacts/figures/classification_compare.png`](./artifacts/figures/classification_compare.png)
+- Визуализация аугментаций: [`./artifacts/figures/augmentations_preview.png`](./artifacts/figures/augmentations_preview.png)
+- Визуализации второй части: 
+- Примеры детекции: [`./artifacts/figures/detection_examples.png`](./artifacts/figures/detection_examples.png)
+- Метрики детекции: [`./artifracts/figures/detection_metrics.png`](./artifacts/figures/detection_metrics.png)
 
 Короткая сводка (6-10 строк):
 
-- Лучший эксперимент части A:
-- Лучшая `val_accuracy`:
-- Итоговая `test_accuracy` лучшего классификатора:
-- Что дали аугментации (C2 vs C1):
-- Что дал transfer learning (C3/C4 vs C1/C2):
-- Что оказалось лучше: head-only или partial fine-tuning:
-- Что показал режим V1 во второй части:
-- Что показал режим V2 во второй части:
-- Как интерпретируются метрики второй части:
+- Лучший эксперимент части A: C4
+- Лучшая `val_accuracy`: 0.964
+- Итоговая `test_accuracy` лучшего классификатора: 0.949
+- Что дали аугментации (C2 vs C1): повышение val_accuracy с 0.548 до 0.6
+- Что дал transfer learning (C3/C4 vs C1/C2): значительное повышение accuracy с 0.6 до 0.943
+- Что оказалось лучше: head-only или partial fine-tuning: partial fine-tuning
+- Что показал режим V1 во второй части: низкий (0.442) precision и высокий (0.927) recall
+- Что показал режим V2 во второй части: precision увеличился до 0.675, recall уменьшился до 0.865
+- Как интерпретируются метрики второй части: При увеличении порога precision значительно увеличился, но при этом recall уменьшился не сильно.
 
 ## 7. Анализ
 
-(8-15 предложений)
+Простая CNN показывает низкую точность из-за не оптимальноц архитектуры самой сети по данную задачу. Аугментации дали небольшое улучшение точности. Pretrained ResNet18 дала знаительный прирост точности. Это произошло потому что данная сеть гораздо больше, чем простая CNN и она гораздо лучше обучена. По результатам эксперимента, head-only показал немного меньшую точность, чем partial fine-tuning. 
+Во второй части работы производился инференс детекции изображений на готовой модели. Для оценки качества была использована метрика mean IoU, так как она подходит для оценки результатов детекции. При увеличении порога precision значительно увеличился, но при этом recall уменьшился не сильно. Модель часто дает ложные срабатывания, но практически не пропускает реальные объекты.
 
-Нужно прокомментировать:
-
-- почему простая CNN ведёт себя именно так на выбранном датасете;
-- дали ли аугментации устойчивое улучшение;
-- почему pretrained ResNet18 помогла или не помогла;
-- чем head-only отличается от partial fine-tuning в ваших результатах;
-- почему выбранная метрика второй части подходит под задачу;
-- что произошло при переходе от V1 к V2;
-- какие ошибки модели оказались наиболее показательными.
 
 ## 8. Итоговый вывод
 
-(3-7 предложений)
+Для классификации лучше всего взять предобученную модель ResNet18 с fine-tune. Transfer learning хорош тем, что не нужно заново переобучать всю модель, а можно просто адаптировать ее для решения новой задачи. Это сильно экономит время и вычислительные ресурсы. В задачах детекции и сегментации мы не просто классифицируем объекты. а находим их местоположение на картинке. Базовая метрика, которая используется для этих задач - это IoU. Она показывает, насколько пердсказанное положение объекта на картинке совпадает с реальным.
 
-- Какой конфиг классификации вы бы взяли как базовый и почему.
-- Что главное вы поняли про transfer learning.
-- Что главное вы поняли про detection/segmentation и метрики для этих задач.
 
 ## 9. Приложение (опционально)
 
