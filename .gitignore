@@ -57,3 +57,4 @@ logs/
 *.old
 
 homeworks/*/data
+homeworks/HW13/outputs
