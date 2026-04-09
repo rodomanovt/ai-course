@@ -76,3 +76,4 @@ def load_and_prepare_dataset(input_filename: str, anomalies_quantile: float = 0.
 
 if __name__ == "__main__":
     df = load_and_prepare_dataset("dataset_autos_full.csv", save=True)
+    print(df)
