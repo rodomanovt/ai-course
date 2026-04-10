@@ -1,29 +1,19 @@
 from typing import Any
-from .data_loader import get_mapping
+from data.data_loader import get_mapping
+from utils.request_response_model import PriceRequest
 
 
-def validate_request() -> bool:
+def validate_request(req: PriceRequest) -> bool:
     """Проверка введенных данных на корректность"""
     pass
 
 
 
-def request_to_features(
-    brand: str,
-    model: str,
-    dateOfRegistration: str,
-    powerPS: int,
-    mileage: int,
-    gearbox: str,
-    fuelType: str,
-    notRepairedDamage: bool,
-    vehicleType: str,
-    dateCrawled: str,
-) -> dict[str: int]:
+def request_to_features(req: PriceRequest) -> dict[str: int]:
     """Преобразует ввод пользователя в признаки для модели
     На этом этапе предполагается, что ввод корректен"""
     pass
 
 
 if __name__ == '__main__':
-    print(get_mapping())
+    validate_request()

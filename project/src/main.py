@@ -2,10 +2,10 @@
 """Запуск: из project/src uvicorn main:app"""
 
 from fastapi import FastAPI, File, HTTPException
-from pydantic import BaseModel, Field
 from data.request_transformer import validate_request, request_to_features
 from time import perf_counter
 from model.inference import dummy_predict
+from utils.request_response_model import PriceRequest, PriceResponse
 
 
 app = FastAPI(
@@ -17,26 +17,6 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url=None,
 )
-
-
-class PriceRequest(BaseModel):
-    """Признаки, которые подаются в модель"""
-    brand: str = Field(..., description="")
-    model: str = Field(..., description="")
-    dateOfRegistration: str = Field(..., description="Дата регистрации автомобиля в формате DD.MM.YYYY")
-    powerPS: int = Field(..., ge=0, description="Мощность двигателя (л. с.)")
-    mileage: int = Field(..., ge=0, description="Пробег (км)")
-    gearbox: str = Field(..., description="Тип КПП: manual или automatic")
-    fuelType: str = Field(..., description="Тип топлива")
-    notRepairedDamage: bool = Field(..., ge=0, description="Наличие повреждений")
-    vehicleType: str = Field(..., description="Тип кузова")
-    dateCrawled: int = Field(..., ge=0, description="Дата загрузки объявления")
-
-
-class PriceResponse(BaseModel):
-    """Ответ модели"""
-    price: float = Field(..., description="предсказанная цена автомобиля")
-    latency_ms: float = Field(..., ge=0.0, description="Время обработки запроса на сервере, миллисекунды")
 
 
 @app.get("/health", tags=["system"])
@@ -55,6 +35,7 @@ def price(req: PriceRequest) -> PriceResponse:
     Эндпоинт, который принимает признаки и возвращает цену автомобиля
     """
     start = perf_counter()
+    validate_request(req)
 
     price = 1000
 
