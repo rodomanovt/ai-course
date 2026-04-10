@@ -1,9 +1,36 @@
 import pandas as pd
 import os
+import json
 from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parents[2] # project/
+CAT_FEATURES = ["gearbox", "fuelType", "notRepairedDamage", "vehicleType", "model", "brand"]
+
+
+def get_mapping() -> dict[str: int]:
+    """Извлечение маппинга категориальных значений из project/configs/categorial_map.json"""
+    mapping_path = os.path.join(BASE_DIR, "configs", "categorial_map.json")
+    with open(mapping_path, 'r', encoding='utf-8') as file:
+        mapping = json.load(file)
+        return mapping
+
+
+def _make_mapping(df: pd.DataFrame) -> dict[str: int]:
+    """Создание маппинга для категориальных значений и сохранение его в project/configs/categorial_map.json"""
+    mapping_path = os.path.join(BASE_DIR, "configs", "categorial_map.json")
+    mapping = dict()
+
+
+    for feature in CAT_FEATURES:
+        mapping[feature] = {}
+
+        values = df[feature].unique() # значения категориальных признаков
+        for i, el in enumerate(values, 0):
+            mapping[feature][el] = i
+    
+    with open(mapping_path, 'w', encoding='utf-8') as file:
+        json.dump(mapping, file, indent=4)
 
 
 def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99) -> pd.DataFrame:
@@ -36,6 +63,7 @@ def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99) -> pd.Da
         df_filtered = df_filtered[(df_filtered[col] >= q_low) & (df_filtered[col] <= q_high)]
 
     df_filtered = df_filtered.reset_index(drop=True)
+    _make_mapping(df_filtered)
 
     return df_filtered
 
@@ -47,10 +75,10 @@ def _make_features_df(df: pd.DataFrame) -> pd.DataFrame:
     # Числовые поля оставляем без изменений
     df_features = df.select_dtypes(include='number')
 
-    # Кодируем категориальные признаки с маленьким числом значений
-    cat_features = ["gearbox", "fuelType", "notRepairedDamage", "vehicleType", "model", "brand"]
-    for feature in cat_features:
-        df_features[feature] = df[feature].astype('category').cat.codes
+    # Кодируем категориальные признаки:
+    mapping = get_mapping()
+    for feature in CAT_FEATURES:
+        df_features[feature] = df[feature].map(mapping[feature])
 
     # Добавим признак monthCrawled, чтобы уловить сезонные колебания цены
     df_features['monthCrawled'] = pd.to_datetime(df['dateCrawled'], errors='coerce').dt.month
