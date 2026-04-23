@@ -6,6 +6,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[2] # project/
 CAT_FEATURES = ["gearbox", "fuelType", "notRepairedDamage", "vehicleType", "model", "brand"]
+NUMERIC_FEATURES = ['yearOfRegistration', 'powerPS', 'kilometer', 'monthOfRegistration', 'monthCrawled']
 
 
 def get_mapping() -> dict[str: int]:
@@ -41,15 +42,16 @@ def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99) -> pd.Da
 
     """
     Удаляем столбцы:
-        index - ID записи
-        nrOfPictures - константный
+        index             - ID записи
+        nrOfPictures      - константный
         seller, offerType - почти константные
-        abtest - флаг, на цену не влияет
-        dateCreated - дата создания записи
-        name - 233к уникальных значений, для обучения бесполезно
+        abtest            - флаг, на цену не влияет
+        dateCreated       - дата создания записи
+        name              - 233к уникальных значений, для обучения бесполезно
+        postalCode        - требует слишком сложный feature-engineering
     """
 
-    columns_to_remove = ['index', "nrOfPictures", "seller", "offerType", "abtest", "dateCreated", "name"]
+    columns_to_remove = ['index', "nrOfPictures", "seller", "offerType", "abtest", "dateCreated", "name", "postalCode"]
     for col in columns_to_remove:
         df = df.drop(col, axis=1)
 
@@ -69,7 +71,7 @@ def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99) -> pd.Da
 
 
 
-def _make_features_df(df: pd.DataFrame) -> pd.DataFrame:
+def make_features_df(df: pd.DataFrame) -> pd.DataFrame:
     """Выделение признаков из данных"""
 
     # Числовые поля оставляем без изменений
@@ -92,7 +94,7 @@ def load_and_prepare_dataset(input_filename: str, anomalies_quantile: float = 0.
     dataset_dir = os.path.join(BASE_DIR, "data", input_filename)
     df = pd.read_csv(dataset_dir, sep=',', encoding='utf-8')
     df_filtered = _filter_dataset(df, anomalies_quantile=anomalies_quantile)
-    df_features = _make_features_df(df_filtered)
+    df_features = make_features_df(df_filtered)
     print(f"Датасет подготовлен: {df_features.shape=}")
 
     if save:
@@ -104,4 +106,4 @@ def load_and_prepare_dataset(input_filename: str, anomalies_quantile: float = 0.
 
 if __name__ == "__main__":
     df = load_and_prepare_dataset("dataset_autos_full.csv", save=True)
-    print(df)
+    print(df.columns)
