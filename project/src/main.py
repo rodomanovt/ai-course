@@ -39,8 +39,7 @@ def price(req: PriceRequest) -> PriceResponse:
     user_errors = get_incorrect_features(req)
     if len(user_errors) == 0:
         features = request_to_features(req)
-        print(features)
-        price = 1000
+        price = dummy_predict(features) # TODO: предсказание на реальной модели
     else:
         raise HTTPException(400, f"Введены некорректные значения признаков: {", ".join(user_errors)}")
 

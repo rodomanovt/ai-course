@@ -62,46 +62,26 @@ def get_incorrect_features(req: PriceRequest) -> list[str]:
     
     return errors
 
-    
 
-
-# def request_to_features(req: PriceRequest) -> dict[str: int]:
-#     """Преобразует ввод пользователя в признаки для модели
-#     На этом этапе предполагается, что ввод корректен"""
-#     features = {
-#         "gearbox", 
-#         "fuelType", 
-#         "notRepairedDamage", 
-#         "vehicleType", 
-#         "model", 
-#         "brand"
-#         'yearOfRegistration', 'powerPS', 'kilometer', 'monthOfRegistration', 'postalCode', 'monthCrawled'
-#     }
 def request_to_features(request: PriceRequest) -> pd.DataFrame:
     """Преобразует Pydantic-запрос в DataFrame, готовый для model.predict()"""
     
-    # 1. Преобразуем модель в словарь (Pydantic v2)
     data = request.model_dump()
     
-    # 2. Парсим дату регистрации -> извлекаем год и месяц
+    # Парсим дату регистрации, извлекаем год и месяц
     reg_dt = datetime.strptime(data.pop("dateOfRegistration"), "%d.%m.%Y")
     data["yearOfRegistration"] = reg_dt.year
     data["monthOfRegistration"] = reg_dt.month
     
-    # 3. Приводим названия к схеме, на которой обучалась модель
-    data["kilometer"] = data.pop("mileage")               # mileage -> kilometer
-    print(data["notRepairedDamage"])
-    data["notRepairedDamage"] = 1 if data["notRepairedDamage"] else 0 # TODO
+    # Приводим названия к схеме, на которой обучалась модель
+    data["kilometer"] = data.pop("mileage") # mileage -> kilometer
+    data["notRepairedDamage"] = "ja" if data["notRepairedDamage"] else "nein"
     
-    # 4. Создаём однострочный DataFrame (dateCrawled остаётся для _make_features_df)
     df_raw = pd.DataFrame([data])
     
-    # 5. Применяем вашу существующую логику выделения признаков
     df_features = make_features_df(df_raw)
     
-    # 6. Жёстко задаём порядок колонок (sklearn/xgboost требуют строгий порядок)
     expected_cols = NUMERIC_FEATURES + CAT_FEATURES
-    # Убираем возможные дубли, сохраняя порядок появления
     expected_cols = list(dict.fromkeys(expected_cols))
     
     return df_features[expected_cols]

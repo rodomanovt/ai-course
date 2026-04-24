@@ -22,7 +22,6 @@ def _make_mapping(df: pd.DataFrame) -> dict[str: int]:
     mapping_path = os.path.join(BASE_DIR, "configs", "categorial_map.json")
     mapping = dict()
 
-
     for feature in CAT_FEATURES:
         mapping[feature] = {}
 
