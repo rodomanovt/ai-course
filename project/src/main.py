@@ -1,10 +1,10 @@
 """ОСНОВНАЯ ТОЧКА ВХОДА ДЛЯ ПРОЕКТА, ЗАПУСКАЕТ СЕРВИС НА FASTAPI"""
 """Запуск: из project/src uvicorn main:app"""
 
-from fastapi import FastAPI, File, HTTPException
+from fastapi import FastAPI, HTTPException
 from data.request_transformer import get_incorrect_features, request_to_features
 from time import perf_counter
-from model.inference import dummy_predict
+from model.inference import dummy_predict, predict
 from utils.request_response_model import PriceRequest, PriceResponse
 
 
@@ -39,7 +39,7 @@ def price(req: PriceRequest) -> PriceResponse:
     user_errors = get_incorrect_features(req)
     if len(user_errors) == 0:
         features = request_to_features(req)
-        price = dummy_predict(features) # TODO: предсказание на реальной модели
+        price = predict(features)
     else:
         raise HTTPException(400, f"Введены некорректные значения признаков: {", ".join(user_errors)}")
 

@@ -33,7 +33,7 @@ def _make_mapping(df: pd.DataFrame) -> dict[str: int]:
         json.dump(mapping, file, indent=4)
 
 
-def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99) -> pd.DataFrame:
+def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99, make_mapping=False) -> pd.DataFrame:
     """Фильтрация строк с пропусками и аномальными значениями"""
 
     # так как размер датасета большой, то уберем все строки, содержащие пропуски хотя бы в одном поле
@@ -64,7 +64,9 @@ def _filter_dataset(df: pd.DataFrame, anomalies_quantile: float = 0.99) -> pd.Da
         df_filtered = df_filtered[(df_filtered[col] >= q_low) & (df_filtered[col] <= q_high)]
 
     df_filtered = df_filtered.reset_index(drop=True)
-    _make_mapping(df_filtered)
+
+    if make_mapping:
+        _make_mapping(df_filtered)
 
     return df_filtered
 
@@ -87,12 +89,12 @@ def make_features_df(df: pd.DataFrame) -> pd.DataFrame:
     return df_features
 
 
-def load_and_prepare_dataset(input_filename: str, anomalies_quantile: float = 0.99, save=True) -> pd.DataFrame:
+def load_and_prepare_dataset(input_filename: str, anomalies_quantile: float = 0.99, save=True, make_mapping=False) -> pd.DataFrame:
     """Основная функция для загрузки и подготовки датасета
     Сохраняет подготовленные данные в project/data"""
     dataset_dir = os.path.join(BASE_DIR, "data", input_filename)
     df = pd.read_csv(dataset_dir, sep=',', encoding='utf-8')
-    df_filtered = _filter_dataset(df, anomalies_quantile=anomalies_quantile)
+    df_filtered = _filter_dataset(df, anomalies_quantile=anomalies_quantile, make_mapping=make_mapping)
     df_features = make_features_df(df_filtered)
     print(f"Датасет подготовлен: {df_features.shape=}")
 
@@ -104,5 +106,5 @@ def load_and_prepare_dataset(input_filename: str, anomalies_quantile: float = 0.
 
 
 if __name__ == "__main__":
-    df = load_and_prepare_dataset("dataset_autos_full.csv", save=True)
+    df = load_and_prepare_dataset("dataset_autos_full.csv", save=True, make_mapping=True)
     print(df.columns)
