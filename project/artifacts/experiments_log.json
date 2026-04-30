@@ -1,0 +1,81 @@
+[
+  {
+    "model_name": "DummyRegressor",
+    "params": {
+      "constant": null,
+      "quantile": null,
+      "strategy": "median"
+    },
+    "metrics": {
+      "MAE": 4407.162035214778,
+      "RMSE": 6856.591212493005,
+      "r2": -0.13661379403698026,
+      "MAPE": 150.98221296867052
+    }
+  },
+  {
+    "model_name": "LinearRegression",
+    "params": {
+      "copy_X": true,
+      "fit_intercept": true,
+      "n_jobs": -1,
+      "positive": false,
+      "tol": 1e-06
+    },
+    "metrics": {
+      "MAE": 2637.8846621240314,
+      "RMSE": 3748.5178543010406,
+      "r2": 0.6602843343807807,
+      "MAPE": 115.57440068492649
+    }
+  },
+  {
+    "model_name": "RandomForestRegressor",
+    "params": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "criterion": "squared_error",
+      "max_depth": null,
+      "max_features": 1.0,
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 1,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 200,
+      "n_jobs": -1,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "metrics": {
+      "MAE": 1171.6077551234616,
+      "RMSE": 2037.5980673765737,
+      "r2": 0.8996231767439644,
+      "MAPE": 36.17762902096203
+    }
+  },
+  {
+    "model_name": "CatBoostRegressor",
+    "params": {
+      "iterations": 1000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "use_best_model": true,
+      "verbose": 100,
+      "eval_metric": "RMSE",
+      "early_stopping_rounds": 50
+    },
+    "metrics": {
+      "MAE": 1182.1533007614669,
+      "RMSE": 2021.9962997014827,
+      "r2": 0.9011544505539011,
+      "MAPE": 36.26924994802358
+    }
+  }
+]

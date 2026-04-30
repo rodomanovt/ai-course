@@ -60,3 +60,4 @@ homeworks/*/data
 homeworks/HW13/outputs
 
 project/data/dataset_autos_full_prepared.csv
+catboost_info/

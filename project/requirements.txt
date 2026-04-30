@@ -2,3 +2,5 @@ numpy>=2.3.5
 pandas>=2.3.3
 scikit-learn>=1.8.0
 fastapi>=0.135.3
+catboost>=1.2.10
+ipywidgets>=8.1.8

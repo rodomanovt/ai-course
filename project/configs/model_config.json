@@ -1,0 +1,20 @@
+{
+  "model_name": "CatBoostRegressor",
+  "params": {
+    "iterations": 1000,
+    "learning_rate": 0.03,
+    "depth": 8,
+    "loss_function": "RMSE",
+    "random_seed": 42,
+    "use_best_model": true,
+    "verbose": 100,
+    "eval_metric": "RMSE",
+    "early_stopping_rounds": 50
+  },
+  "metrics": {
+    "MAE": 1182.1533007614669,
+    "RMSE": 2021.9962997014827,
+    "r2": 0.9011544505539011,
+    "MAPE": 36.26924994802358
+  }
+}
